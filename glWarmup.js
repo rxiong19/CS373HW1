@@ -53,6 +53,18 @@ var teapot_geometry = new THREE.TeapotBufferGeometry(1);
 var teapot = new THREE.Mesh(teapot_geometry, material);
 shapes.push(teapot);
 
+//TODO: Add two additional shapes: circle & box
+
+//Creates Circle mesh
+var circle_geometry = new THREE.CircleGeometry(1, 16);
+var circle = new THREE.Mesh(circle_geometry, material);
+shapes.push(circle);
+
+//Creates Box mesh
+var box_geometry = new THREE.BoxBufferGeometry(1,1,1);
+var box = new THREE.Mesh(box_geometry, material);
+shapes.push(box);
+
 //Sets initial shape
 var currentShape = triangle;
 var currentShapeId = 0;
@@ -63,6 +75,7 @@ var tx = 0.0;
 var ty = 0.0;
 var scale = 1.0;
 var angleV = 0.0;
+var angleH = 0.0;
 var isWireframe = false;
 
 //Mouse variables
@@ -111,7 +124,7 @@ function animate() {
 
 function render() {
   // rotate the shape in x, y, z axes respectively
-	currentShape.rotation.setFromVector3(new THREE.Vector3(angleV, 0.0, 0.0));
+	currentShape.rotation.setFromVector3(new THREE.Vector3(angleV, angleH, 0.0));
 	currentShape.scale.set(scale, scale, scale); // uniform scaling
 	currentShape.material.wireframe = isWireframe;
 
@@ -119,7 +132,10 @@ function render() {
    * How does the program detect whether mouse pointer is clicked on the shape?
    * Write your answer here in 1-2 sentences: 
    *
-   *********************************/
+   * The program will record the mouse_click position (x,y) and calculate if it is 
+   * intersecting with the coordinates of the shapes. If so, then it will detect that the mouse pointer 
+   * is clicked on the shape.
+   ******************************/
 	if (mouseClicked) {
 	
 		raycaster.setFromCamera(norm_mouse, camera);
@@ -133,9 +149,11 @@ function render() {
 		//Set click to false so we don't detect a click in next iteration
 		mouseClicked = false;
 	}
-	if (clickedOnShape && mouseButton == 0) { // update vertical rotation angle
+	if (clickedOnShape && mouseButton == 0) { // update vertical & horizontal rotation angle
 		var dy = mouse.y - prevMouse.y;
+		var dx = mouse.x - prevMouse.x;
 		angleV += dy*0.01;
+		angleH += dx*0.01;
 	}
 	
 	if (clickedOnShape && mouseButton == 2)	{ // update scaling
